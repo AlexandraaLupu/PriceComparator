@@ -1,4 +1,4 @@
-package com.example.pricecomparator.models;
+package com.example.pricecomparator.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,9 +24,6 @@ public class Discount {
     private Product product;
 
     private String store;
-    
-    private Double quantity;
-    private String packageUnit;
 
     private LocalDate fromDate;
     private LocalDate toDate;

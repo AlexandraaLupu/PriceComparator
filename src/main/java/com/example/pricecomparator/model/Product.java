@@ -1,4 +1,4 @@
-package com.example.pricecomparator.models;
+package com.example.pricecomparator.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,4 +19,6 @@ public class Product {
     private String name;
     private String category;
     private String brand;
+    private Double packageQuantity;
+    private String packageUnit;
 }
