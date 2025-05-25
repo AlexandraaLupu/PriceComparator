@@ -23,6 +23,8 @@ public class DiscountController {
     @GetMapping("/top")
     public List<Discount> getTopCurrentDiscounts(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return discountService.getTopCurrentDiscounts(date);
+        return discountService.getRecentlyAddedDiscounts(date);
     }
+
+
 }

@@ -3,7 +3,6 @@ package com.example.pricecomparator.controller;
 import com.example.pricecomparator.DTO.OptimizeBasketRequest;
 import com.example.pricecomparator.model.StoreOffer;
 import com.example.pricecomparator.service.StoreOfferService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +27,5 @@ public class StoreOfferController {
             @RequestBody OptimizeBasketRequest request) {
         return storeOfferService.optimizeBasket(request.getProductIds(), request.getDate());
     }
-
 
 }

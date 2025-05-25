@@ -7,7 +7,6 @@ import com.example.pricecomparator.repository.DiscountRepository;
 import com.example.pricecomparator.repository.ProductRepository;
 import com.example.pricecomparator.repository.StoreOfferRepository;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,8 +35,10 @@ public class CsvImportService {
         this.discountRepo = discountRepo;
     }
 
+
     @PostConstruct
     public void importCsvsAtStartup() {
+        // populates the tables with all the csvs from the resources directory
         File dir = new File(csvDirectory);
         File[] files = dir.listFiles((d, name) -> name.endsWith(".csv"));
         if (files == null) return;
@@ -53,6 +53,20 @@ public class CsvImportService {
             } catch (Exception e) {
                 System.err.println("Failed to import: " + file.getName() + ": " + e.getMessage());
             }
+        }
+    }
+
+    public void importCsv(String filename) throws IOException {
+        // method for import csv endpoint
+        File file = new File(csvDirectory + File.separator + filename);
+        if (!file.exists() || !file.isFile()) {
+            throw new IOException("File not found: " + filename);
+        }
+
+        if (filename.contains("discount")) {
+            importDiscountCsv(file);
+        } else {
+            importProductAndOfferCsv(file);
         }
     }
 
@@ -102,10 +116,11 @@ public class CsvImportService {
                     Product p = new Product();
                     p.setId(productId);
                     p.setName(tokens[1]);
-                    p.setCategory(tokens[2]);
-                    p.setBrand(tokens[3]);
-                    p.setPackageQuantity(Double.parseDouble(tokens[4]));
-                    p.setPackageUnit(tokens[5]);
+                    p.setBrand(tokens[2]);
+                    p.setPackageQuantity(Double.parseDouble(tokens[3]));
+                    p.setPackageUnit(tokens[4]);
+                    p.setCategory(tokens[5]);
+
                     return productRepo.save(p);
                 });
 
@@ -125,7 +140,7 @@ public class CsvImportService {
     }
 
     private LocalDate extractDateFromFilename(String filename) {
-        Pattern pattern = Pattern.compile("(\\d{4}-\\d{2}-\\d{2})");
+        Pattern pattern = Pattern.compile("(\\d{4}-\\d{2}-\\d{2})"); // regex for date
         Matcher matcher = pattern.matcher(filename);
         if (matcher.find()) {
             try {

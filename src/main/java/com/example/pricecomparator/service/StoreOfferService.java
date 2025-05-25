@@ -2,7 +2,6 @@ package com.example.pricecomparator.service;
 
 import com.example.pricecomparator.model.StoreOffer;
 import com.example.pricecomparator.repository.StoreOfferRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +20,10 @@ public class StoreOfferService {
     }
 
     public Map<String, List<StoreOffer>> optimizeBasket(List<String> productIds, LocalDate referenceDate) {
+        //  for every product id in the list of product ids provided by the user
+        // find the closest date of the offer for that product; the result can be a list if multiple stores have that product
+        // get the storeOffer with the smallest price from the offers
+        // add to the map the store and the list of products
         Map<String, List<StoreOffer>> storeToOffersMap = new HashMap<>();
 
         for (String productId : productIds) {
@@ -29,13 +32,11 @@ public class StoreOfferService {
 
             StoreOffer cheapest = offers.stream()
                     .min(Comparator.comparingDouble(StoreOffer::getPrice))
-                    .orElse(null);
+                    .get();
 
-            if (cheapest != null) {
-                storeToOffersMap
-                        .computeIfAbsent(cheapest.getStore(), k -> new ArrayList<>())
-                        .add(cheapest);
-            }
+            storeToOffersMap
+                    .computeIfAbsent(cheapest.getStore(), k -> new ArrayList<>())
+                    .add(cheapest);
         }
 
         return storeToOffersMap;
