@@ -10,6 +10,22 @@ import java.util.Optional;
 
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
     List<Discount> findByStore(String store);
+    @Query("""
+        SELECT DISTINCT(d)
+        FROM Discount d
+        WHERE :today BETWEEN d.fromDate AND d.toDate
+        ORDER BY d.percentageOfDiscount DESC
+    """)
+    List<Discount> findCurrentDiscountsOrdered(LocalDate today);
+
+    @Query("""
+    SELECT d FROM Discount d
+    WHERE d.product.id IN :productIds
+      AND d.store = :store
+      AND :date BETWEEN d.fromDate AND d.toDate
+    ORDER BY d.id, d.store, d.fromDate
+""")
+    List<Discount> findActiveDiscountsByDate(List<String> productIds, String store, LocalDate date);
 
     @Query("""
         SELECT d FROM Discount d
@@ -24,6 +40,6 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
       AND d.store = :store
       AND :date BETWEEN d.fromDate AND d.toDate
     ORDER BY d.fromDate DESC
-    """)
+""")
     List<Discount> findActiveDiscount(String productId, String store, LocalDate date);
 }

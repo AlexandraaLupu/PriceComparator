@@ -19,6 +19,10 @@ public class DiscountService {
         return discountRepository.findByStore(store);
     }
 
+    public List<Discount> getTopCurrentDiscounts(LocalDate date) {
+        return discountRepository.findCurrentDiscountsOrdered(date);
+    }
+
     public List<Discount> getRecentlyAddedDiscounts(LocalDate date) {
         LocalDate dayBefore = date.minusDays(1);
         return discountRepository.findDiscountsAddedRecently(date, dayBefore);
